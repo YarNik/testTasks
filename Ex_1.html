@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	
+    <title>Temperature</title>
+	
+	<script
+	  src="https://code.jquery.com/jquery-3.3.1.min.js"
+	  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+	  crossorigin="anonymous"></script>
+
+	<script>
+	
+		$(function(){
+			$("button").on("click", function(){
+				$("#results").empty();
+				var content = +tem_input.value;
+				var tem_begin_scal = scal_input.value;
+				if (tem_begin_scal == "C"){
+					var kelvin = Math.round(content + 273.15);
+					var fahrenheit = Math.round(content * 9/5 + 32);
+					var result = `{"K": "${kelvin}", "F": "${fahrenheit}"}`;
+					if (kelvin < 0){result = `Temperature cannot be lower than absolute zero !!!`}
+				}else if (tem_begin_scal == "K"){
+						var celsius = Math.round(content - 273.15);
+						var fahrenheit = Math.round((content - 273.15) * 9/5 + 32);
+						var result = `{"C": "${celsius}", "F": "${fahrenheit}"}`;
+						if (content < 0){result = `Temperature cannot be lower than absolute zero !!!`}
+					}else if (tem_begin_scal == "F"){
+							var celsius = Math.round((content - 32) * 5/9);
+							var kelvin = Math.round((content - 32) * 5/9 + 273.15);
+							var result = `{"C": "${celsius}", "K": "${kelvin}"}`;
+							if (kelvin < 0){result = `Temperature cannot be lower than absolute zero !!!`}
+						}else {result = `Select temperature scale`};
+				
+				$("#results").append($(`
+					<tr>
+					  <td>${result}</td>
+					</tr>
+				`));
+			});
+		});
+	
+	</script>
+	
+  </head>
+  <body>
+    
+	<div class="container mt-5">
+		
+		<h1 class="mb-4">Temperature</h1>
+	
+		<!-- Input Data Form -->
+		<div class="form mb-5">	
+		  <div class="form-row">
+			<div class="form-group col-md-4">
+			  <label for="tem_input">Temperature</label>
+			  <input type="number" class="form-control" id="tem_input" min="-460" max="1000000" value="0">
+			</div>
+			<div class="form-group col-md-4">
+			  <label for="scal_input">Select temperature scale</label>
+			   <select class= "custom-select custom-select" id="scal_input"> <option selected >select scale</option> <option value= "C" > C </option> <option value= "K" > K </option> <option value= "F" > F </option> </select> 
+			</div> 
+		  </div>
+		  
+		  <button class="btn btn-primary w-50">Calculate</button>
+		</div>
+		<!-- /Input Data Form -->
+		
+		<!-- Output Table -->
+		
+		<div class="row"> <div class="col-sm-6">
+			<table class="table">
+			  <thead>
+				<tr>
+				  <th>Result</th>
+				</tr>
+			  </thead>
+			  <tbody id="results">
+			  
+			  </tbody>
+			</table>
+		<!-- /Output Table -->
+		</div>
+		
+	</div>
+   
+  </body>
+</html>

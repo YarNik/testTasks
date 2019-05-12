@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	
+    <title>Plate transfer</title>
+	
+	<script
+	  src="https://code.jquery.com/jquery-3.3.1.min.js"
+	  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+	  crossorigin="anonymous"></script>
+	
+	
+	<script>
+				
+		/**   
+						   The recursive solution to this problem is used.
+               Move the n-1 plates with the unloading machine (slot_A) to an additional place (slot_B).
+               Then we transfer the heaviest plate to the bootable machine (slot_C).
+               After that, we move the n-1 plates from slot_B to slot_C on top of the heaviest plate.
+				
+		**/
+		
+		$(function(){
+			$("button").on("click", function(){
+				$("#results").empty();	
+	
+				function Transfer(n, a, arr_a, c, arr_c, b, arr_b){      // transfer n plates from slot_A to slot_C using slot_B
+				   if (n <= 0)                                            
+					  return;
+					
+				   Transfer(n-1, a,arr_a,b,arr_b,c,arr_c);               //  transfer n-1 plates from slot_A to slot_B
+				   var item = arr_a.pop();
+				   arr_c.push(item);                                     // transfer 1 plate from slot_A to slot_C
+				   var result = ("#" + item +" "+ a +" -> " + c + "<br>");
+					//console.log(result);
+					$("#results").append($(`<tr><td>${result}</td></tr>`));
+				   Transfer(n-1, b,arr_b,c,arr_c,a,arr_a);               //transfer n-1 plates from slot_B to slot_C, used slot_A
+					}
+	
+				if(number_input.value == 3){Transfer(3,"slot_A",[3,2,1],"slot_C",[],"slot_B",[]);}         // crutch because 
+				if(number_input.value == 4){Transfer(4,"slot_A",[4,3,2,1],"slot_C",[],"slot_B",[]);}       // call stack 
+				if(number_input.value == 5){Transfer(5,"slot_A",[5,4,3,2,1],"slot_C",[],"slot_B",[]);}     //  overflow
+				if(number_input.value == 6){Transfer(6,"slot_A",[6,5,4,3,2,1],"slot_C",[],"slot_B",[]);}
+				if(number_input.value == 7){Transfer(7,"slot_A",[7,6,5,4,3,2,1],"slot_C",[],"slot_B",[]);}
+				if(number_input.value == 8){Transfer(8,"slot_A",[8,7,6,5,4,3,2,1],"slot_C",[],"slot_B",[]);}
+				if(number_input.value == "select the number") {$("#results").append($(`<tr><td>select the number</td></tr>`));}
+						
+			});
+		});
+	</script>
+	
+ </head>
+  <body>
+    
+	<div class="container mt-5">
+		
+		<h1 class="mb-4">Plate transfer</h1>
+	
+		<!-- Input Data Form -->
+		<div class="form mb-5">	
+		  <div class="form-row">
+			
+			<div class="form-group col-md-4">
+			  <label for="scal_input">Select the number of plates</label>
+			   <select class= "custom-select custom-select" id="number_input"> <option selected >select the number</option> <option value= 3 > 3 </option> <option value= 4 > 4 </option> <option value= 5 > 5 </option> <option value= 6 > 6 </option> <option value= 7 > 7 </option> <option value= 8 > 8 </option> </select> 
+			</div> 
+		  </div>
+		  
+		  <button class="btn btn-primary w-50">Calculate</button>
+		</div>
+		<!-- /Input Data Form -->
+		
+		<!-- Output Table -->
+		
+		<div class="row"> <div class="col-sm-6">
+			<table class="table table-sm">
+			  <thead>
+				<tr>
+				  <th>Result</th>
+				</tr>
+			  </thead>
+			  <tbody id="results">
+			  
+			  </tbody>
+			</table>
+		<!-- /Output Table -->
+		</div>
+		
+	</div>
+   
+  </body>
+</html>

@@ -1,0 +1,240 @@
+<!--
+	Очевидно, что первый водитель не знает оплат на пропускных пунктах.
+	Поэтому реализуем его алгоритм оплаты следующим образом:
+	- если стоимость оплаты совпадет с имеющимся у него номиналом - он оплачивает этой монетой;
+	- если нет такого номинала - ищет на 1коп. меньше, если нет - то на 1коп. - больше и т.д.
+	
+	Но в этом алгоритме могут быть нерациональные оплаты.
+	Когда же уже известны суммы оплат на каждом пункте - алгоритм можно улучшить.
+	Оплатить все неповторяющиеся суммы соответствющими монетами.
+	Повторяющиеся оплаты оплатить максимально рационально, т.е. максимальные суммы - максимальными монетами, минимальные - минимальными.
+
+		 
+
+
+
+
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	
+    <title>Transport</title>
+	
+	
+	</head>
+  <body>
+    
+	<div class="container mt-2">
+		
+		<h1 class="mb-2">Payment</h1>
+	
+		<!-- Input Data Form -->
+		<div class="form mb-5">	
+		  <div class="form-row">
+			<div class="form-group col-md-4">
+			<ul class="list-group">
+			  <li class="list-group-item"><b>Cost of payment</b></li>
+			  <li class="list-group-item" id="cost1"></li>
+			  <li class="list-group-item" id="cost2"></li>
+			  <li class="list-group-item" id="cost3"></li>
+			  <li class="list-group-item" id="cost4"></li>
+			  <li class="list-group-item" id="cost5"></li>
+			  <li class="list-group-item" id="cost6"></li>
+			  <li class="list-group-item" id="cost7"></li>
+			  <li class="list-group-item" id="cost8"></li>
+			  <li class="list-group-item" id="cost9"></li>
+			  <li class="list-group-item" id="cost10"></li>
+			</ul>
+			</div> 
+			<div class="form-group col-md-4">
+			 <ul class="list-group">
+			  <li class="list-group-item"><b>First driver payment</b></li>
+			  <li class="list-group-item" id="pm_frst1">0</li>
+			  <li class="list-group-item" id="pm_frst2">0</li>
+			  <li class="list-group-item" id="pm_frst3">0</li>
+			  <li class="list-group-item" id="pm_frst4">0</li>
+			  <li class="list-group-item" id="pm_frst5">0</li>
+			  <li class="list-group-item" id="pm_frst6">0</li>
+			  <li class="list-group-item" id="pm_frst7">0</li>
+			  <li class="list-group-item" id="pm_frst8">0</li>
+			  <li class="list-group-item" id="pm_frst9">0</li>
+			  <li class="list-group-item" id="pm_frst10">0</li>
+			  <li class="list-group-item" id="credit">0</li>
+			</ul>
+			</div> 
+			<div class="form-group col-md-4">
+			 <ul class="list-group">
+			  <li class="list-group-item"><b>Other drivers payment</b></li>
+			  <li class="list-group-item" id="pm_oth1">0</li>
+			  <li class="list-group-item" id="pm_oth2">0</li>
+			  <li class="list-group-item" id="pm_oth3">0</li>
+			  <li class="list-group-item" id="pm_oth4">0</li>
+			  <li class="list-group-item" id="pm_oth5">0</li>
+			  <li class="list-group-item" id="pm_oth6">0</li>
+			  <li class="list-group-item" id="pm_oth7">0</li>
+			  <li class="list-group-item" id="pm_oth8">0</li>
+			  <li class="list-group-item" id="pm_oth9">0</li>
+			  <li class="list-group-item" id="pm_oth10">0</li>
+			  <li class="list-group-item" id="credit_oth">0</li>
+			</ul>
+			</div> 
+		  </div>
+		  
+		
+   
+  </body>
+  
+  	<script>
+
+						        //  Создание массива цен на оплату (arr_cost).
+		do {
+		var sum = 0;
+		var arr_cost = [];
+		for (var i =0; i < 10; i++){
+			var number = Math.round(1 + 9 * Math.random());
+			arr_cost.push(number);
+			sum = sum + number;
+			}
+		console.log(arr_cost,sum);
+		} while (sum <= 55);
+		 
+		//console.log(arr_cost,sum);
+		
+				               //   Массивы значений цен и оплат.
+		var cost = [cost1, cost2, cost3, cost4, cost5, cost6, cost7, cost8, cost9, cost10];
+		var pm_frst = [pm_frst1, pm_frst2, pm_frst3, pm_frst4, pm_frst5, pm_frst6, pm_frst7, pm_frst8, pm_frst9, pm_frst10]; 
+		var pm_oth = [pm_oth1, pm_oth2, pm_oth3, pm_oth4, pm_oth5, pm_oth6, pm_oth7, pm_oth8, pm_oth9, pm_oth10];
+		
+		var coinsMap = new Map();
+		for (var i = 1; i <= 10; i++){         // coinsMap - массив монет (ключ - номинал, значение - наличие в кошельке).
+			coinsMap.set(i, "yes");
+			}
+		//console.log(coinsMap);
+		
+		
+		
+		var debt = 0;
+		for (var i = 0; i < 10; i++){
+			cost[i].innerHTML = arr_cost[i];
+			if (coinsMap.get(arr_cost[i]) == "yes"){								 //  Нужная монета есть.
+				coinsMap.set(arr_cost[i], "no"); pm_frst[i].innerHTML = arr_cost[i];
+				}else  for (var j = 1; j < 9; j++){									 // Нужной монеты нет,			
+					if (coinsMap.get(arr_cost[i]-j) == "yes"){						 // ищем подходящую.
+						coinsMap.set(arr_cost[i]-j, "no"); debt = debt + j; pm_frst[i].innerHTML = arr_cost[i]-j; break;
+						}else  if (coinsMap.get(arr_cost[i]+j) && coinsMap.get(arr_cost[i]+j) == "yes"){
+							coinsMap.set(arr_cost[i]+j, "no"); pm_frst[i].innerHTML = arr_cost[i]+j; break;
+							}
+						}
+		}
+		credit.innerHTML = "<b>Debt: </b>" + debt;            // Долг.
+		
+		
+		
+		
+		
+		
+		var sttn = [];
+		function Station(cost,num){					// Конструктор пропускных пунктов.
+			this.cost = cost;
+			this.pay = "not_paid";
+			this.num = num + 1;
+		}
+		for (var i = 0; i < 10; i++){
+			sttn[i] = new Station(arr_cost[i], i);     // 10 пропускных пунктов (sttn).
+		}
+		//console.log(sttn[3]);
+		
+		var used = [];          						// Массив использованных монет (used).
+		var dbt_oth = 0;
+		for (var i = 0; i < 10; i++){					// Если монета нужного номинала есть в наличии
+			coinsMap.set(arr_cost[i], "yes");			// она расходуется(флаг наличия меняется на "no")
+		}												// статус пропускного пункта на "paid".
+		for (var i = 0; i < 10; i++){
+			if (coinsMap.get(arr_cost[i]) == "yes"){used.push(arr_cost[i]);
+				coinsMap.set(arr_cost[i], "no"); pm_oth[i].innerHTML = arr_cost[i]; sttn[i].pay = "paid" ;
+				}
+		}
+		
+		
+		function removeValue(arr, value) {
+			for(var i = 0; i < arr.length; i++) {       // Функция для удаления элемента массива (removeValue).
+				if(arr[i] == value) {
+					arr.splice(i, 1);
+					break;
+				}
+			}
+			return arr;
+		}
+		
+		var not_used = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];			// Массив неиспользованных монет (not_used).
+		console.log(used);                                      
+			for (var i = 0; i < used.length; i++){
+				removeValue(not_used, used[i]);
+			}					
+		
+		function maxArr(arr){
+			for (var i = 0; i < arr.length; i++) {              //      Дедлайн подходит, доделать не успеваю.
+				var max = 0;									//    
+				if (arr[i] > max){max = arr[i];}				//
+			} return max; 										//
+		}
+		
+		var no_pay = [];
+		for (var i = 0; i < 10; i++){
+			if (sttn[i].pay == "not_paid"){
+				no_pay.push(sttn[i].cost);
+			}
+		}
+		
+		
+		for (var i = 0; i < no_pay.length; i++){
+			dbt_oth = dbt_oth + (maxArr(no_pay) - maxArr(not_used));
+			
+			removeValue(no_pay, maxArr(no_pay))
+		}
+		
+		
+		
+		console.log(no_pay);
+		console.log(maxArr(not_used));
+		
+  
+		
+		console.log(not_used);
+		console.log(used);
+	
+		
+	//	var no_paid = [];
+	//		for (var i = 0; i < 10; i++){
+	//			if (sttn[i].pay == "not_paid"){no_paid.push(sttn[i].cost);}
+	//			if (coinsMap.get(arr_cost[i]) == "yes"){not_used.push(arr_cost[i]);}
+	//		}
+	//	console.log(no_paid);
+		console.log(not_used);
+		console.log(coinsMap);
+		console.log(arr_cost);
+		
+		
+		
+		
+		
+		 
+		
+		//console.log(coins);
+		console.log(coinsMap);
+		console.log(debt);
+		
+		
+	</script>
+
+
+</html>
+
+

@@ -1,0 +1,137 @@
+		<!--  Winning a duel in two ways. Or shoot and hit the enemy. Or the enemy will shoot and miss. To determine the optimal step for my shot, I will increase the number of my steps until the probability of my successful shot is more than the probability of an unsuccessful shot of the enemy by:
+		- the next step (if the opponent’s first move),
+		- this step (if the first move is mine).  -->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+   	
+	 <title>Duel</title>
+	
+	<style>
+	
+		.container, h2 {
+			margin-top: 30px;
+		}
+		
+		h2 {
+			margin-bottom: 50px;
+		}
+
+	</style>
+	
+	
+</head>
+<body>
+	<div class="container">
+		<div>
+			<div class="col-12 text-center">
+				<h2 class="display-3">Duel</h2>
+			</div>	
+			
+			<div class="col-9 offset-2 text-center">
+				<div class="row">
+					<div class="col-6">
+					<h6>My hit chance <span id="my_start_probab_label"></span></h6>
+						<input type="range" id="my_start_probab">
+					</div>
+									
+					
+					<div class="col-6">
+					<h6>Enemy hit chance <span id="enemy_start_probab_label"></span></h6>
+						<input type="range" id="enemy_start_probab">
+					</div>
+				</div>
+			</div>
+			
+			<div class="form-check col-6">
+			  <input class="form-check-input" type="radio" name="exampleRadios" id="iAmFirst" checked>
+			  <label class="form-check-label" for="iAmFirst">
+				My step is first
+			  </label>
+			</div>
+			<div class="form-check col-6">
+			  <input class="form-check-input" type="radio" name="exampleRadios" id="enemyIsFirst">
+			  <label class="form-check-label" for="enemyIsFirst">
+				Enemy step is first
+			  </label>
+			</div>
+						
+			<div class="col-6 offset-3">
+				<ul class="list-group">
+					<li class="list-group-item justify-content-between" id="answer">
+						Select shooting conditions
+					</li>
+				</ul>
+			</div>
+				
+		</div>	
+	</div>
+</body>
+
+	<script>
+		
+		var n = 10;                                    // quantity of steps
+		my_start_probab.min = 10;
+		enemy_start_probab.min = 10;        //range of starting values ​​for the 
+		my_start_probab.max = 30;           //probability of a successful shot
+		enemy_start_probab.max = 30;
+		
+		my_start_probab.value = 25;
+		enemy_start_probab.value = 15;
+		my_start_probab_label.innerHTML = "25%";
+		enemy_start_probab_label.innerHTML = "15%";
+		
+		
+		function IncrProbab(start_prob){
+			return (100 - start_prob)/n;
+			}
+		function ArrProbab(start_prob){
+			var arr = [];													//probability array for 
+			var start_prob_const = start_prob;								//each step
+			for (var i = 1; i <= n; i++){
+				start_prob = +start_prob + IncrProbab(start_prob_const);
+				arr.push(start_prob);
+			}
+			return arr;
+		}
+				
+		function Execution(){
+			var my_probab = +my_start_probab.value;
+			var enemy_probab = +enemy_start_probab.value;
+			
+			my_start_probab_label.innerHTML = my_probab + "%";
+			enemy_start_probab_label.innerHTML = enemy_probab + "%";
+						
+			var i_am_arr_probab = ArrProbab(my_probab);
+		    var enemy_is_arr_probab = ArrProbab(enemy_probab);
+			
+			if(document.getElementById("iAmFirst").checked) {					//my first step
+				for (var i = 0; i <= n-1; i++){
+					if (i_am_arr_probab[i] > (100 - enemy_is_arr_probab[i])){var step = i + 1; answer.innerHTML = "Need to shoot at step #" + step; break;}}
+			}
+			if(document.getElementById("enemyIsFirst").checked) {				//first step of the enemy
+				for (var i = 0; i <= n-1; i++){
+					if (i_am_arr_probab[i] > (100 - enemy_is_arr_probab[i+1])){var step = i + 1; answer.innerHTML = "Need to shoot at step #" + step; break;}}
+			}
+		}
+		
+		my_start_probab.oninput = Execution;
+		enemy_start_probab.oninput = Execution;
+		iAmFirst.oninput = Execution;
+		enemyIsFirst.oninput = Execution;
+					
+	</script>
+
+</html>
+
+
+
